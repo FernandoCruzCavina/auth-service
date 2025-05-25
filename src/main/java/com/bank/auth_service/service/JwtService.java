@@ -3,6 +3,7 @@ package com.bank.auth_service.service;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -14,13 +15,16 @@ import com.bank.auth_service.model.UserAuthenticated;
 @Service
 public class JwtService {
 
+    @Value("${jwt.expiration}")
+    private long expirationTime;  
+
     private JwtEncoder jwtEncoder;
 
     public JwtService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateToken(UserAuthenticated user, long expirationTime) {
+    public String generateToken(UserAuthenticated user) {
         List<String> scopes = user.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority).toList();
 

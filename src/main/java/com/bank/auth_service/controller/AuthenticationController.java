@@ -1,5 +1,7 @@
 package com.bank.auth_service.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bank.auth_service.dto.AuthenticationToken;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.service.AuthenticationService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/auth")
@@ -22,9 +26,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationToken> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        AuthenticationToken tokens = authenticationService.login(loginUserDto);
+    public ResponseEntity<AuthenticationToken> authenticate(@RequestBody LoginUserDto loginUserDto, HttpServletRequest httpServletRequest) {
+        AuthenticationToken tokens = authenticationService.login(loginUserDto, httpServletRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(tokens);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshToken(@RequestBody UUID refreshToken, HttpServletRequest httpServletRequest) {
+        String newToken = authenticationService.refreshToken(refreshToken, httpServletRequest);
+        
+        return ResponseEntity.status(HttpStatus.OK).body(newToken);
+    }
+    
 }
