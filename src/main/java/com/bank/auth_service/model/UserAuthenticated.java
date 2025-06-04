@@ -43,7 +43,7 @@ public class UserAuthenticated implements UserDetails, CredentialsContainer {
     
         @Override
         public boolean isEnabled() {
-            return user.isActive();
+            return true;
         }
     
         @Override
