@@ -1,17 +1,13 @@
 package com.bank.auth_service.service;
 
-import java.time.Instant;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bank.auth_service.dto.AuthenticationToken;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.model.UserAuthenticated;
-import com.bank.auth_service.repository.RefreshTokenRepository;
 import com.bank.auth_service.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +31,12 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(loginUserDto.email())
             .orElseThrow(() -> new RuntimeException("User not found"));
         
+            System.out.println(user.getEmail());
         var isPasswordValid = passwordEncoder.matches(loginUserDto.password(), user.getPassword());
-
         if (!isPasswordValid) {
             throw new RuntimeException("Invalid password");
         }
+        System.out.println(isPasswordValid);
         var userAuthenticated = new UserAuthenticated(user);
         var ip = getIpAddress(request);
         var userAgent = request.getHeader("User-Agent");
@@ -68,13 +65,12 @@ public class AuthenticationService {
         return newToken;
     }
 
-    public static String getIpAddress(HttpServletRequest request){
-        String xfHeader = request.getHeader("X-Forwarded_For");
-        
-        if(!xfHeader.isEmpty()){
+    public String getIpAddress(HttpServletRequest request) {
+    
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader != null && !xfHeader.isEmpty()) {
             return xfHeader.split(",")[0];
         }
-
         return request.getRemoteAddr();
     }
 }

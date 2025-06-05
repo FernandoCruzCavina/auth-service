@@ -53,7 +53,7 @@ public class UserAuthenticated implements UserDetails, CredentialsContainer {
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-            return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+            return List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()));
         }
 
 }
