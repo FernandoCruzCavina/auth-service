@@ -24,6 +24,7 @@ public class AuthUserConsumer {
         var user = new User(
             authUserDto.email(),
             authUserDto.password(),
+            false,
             UserRole.USER
         );
 

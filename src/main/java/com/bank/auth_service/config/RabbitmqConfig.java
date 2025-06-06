@@ -12,11 +12,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RabbitmqConfig {
 
     @Value("${broker.queue.create.auth}")
-    public String queueName;
+    public String authQueue;
+
+    @Value("${broker.queue.email.sender}")
+    public String emailQueue; 
 
     @Bean
-    public Queue queue() {
-        return new Queue(queueName, true);
+    public Queue authQueue() {
+        return new Queue(authQueue, true);
+    }
+
+    @Bean
+    public Queue emailQueue(){
+        return new Queue(emailQueue, true);
     }
 
     @Bean

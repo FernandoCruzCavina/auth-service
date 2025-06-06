@@ -1,6 +1,6 @@
 package com.bank.auth_service.dto;
 
-public record AuthenticationToken(
+public record AuthenticationTokenDto(
     String token,
     String refreshToken
 ) {

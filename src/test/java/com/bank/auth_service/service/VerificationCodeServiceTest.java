@@ -1,10 +1,15 @@
 package com.bank.auth_service.service;
 
 import com.bank.auth_service.dto.ConfirmCodeDto;
+import com.bank.auth_service.enums.UserRole;
 import com.bank.auth_service.exception.DontExistOrExpiredCode;
 import com.bank.auth_service.exception.InvalidCodeException;
 import com.bank.auth_service.model.Code;
+import com.bank.auth_service.model.User;
+import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
+import com.bank.auth_service.repository.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +32,10 @@ class VerificationCodeServiceTest {
 
     @Mock
     private CodeRepository codeRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private CodePublisher codePublisher;
     @InjectMocks
     private VerificationCodeService verificationCodeService;
 
@@ -40,6 +51,7 @@ class VerificationCodeServiceTest {
     @Test
     void generateCode_shouldSaveAndReturnCode() {
         ArgumentCaptor<Code> codeCaptor = ArgumentCaptor.forClass(Code.class);
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User("testKey", "password", false, UserRole.USER)));
 
         String code = verificationCodeService.generateCode(key);
 
@@ -55,6 +67,11 @@ class VerificationCodeServiceTest {
         long now = Instant.now().toEpochMilli();
         Code codeModel = new Code(key, code, now);
 
+        User mockUser = new User();
+        mockUser.setEmail(key);
+        mockUser.setVerified(false);
+
+        when(userRepository.findByEmail(key)).thenReturn(Optional.of(mockUser));
         when(codeRepository.findByKey(key)).thenReturn(Optional.of(List.of(codeModel)));
 
         ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code);

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bank.auth_service.dto.AuthenticationToken;
+import com.bank.auth_service.dto.AuthenticationTokenDto;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.service.AuthenticationService;
 
@@ -27,8 +27,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationToken> authenticate(@RequestBody LoginUserDto loginUserDto, HttpServletRequest httpServletRequest) {
-        AuthenticationToken tokens = authenticationService.login(loginUserDto, httpServletRequest);
+    public ResponseEntity<AuthenticationTokenDto> authenticate(@RequestBody LoginUserDto loginUserDto, HttpServletRequest httpServletRequest) {
+        AuthenticationTokenDto tokens = authenticationService.login(loginUserDto, httpServletRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(tokens);
     }

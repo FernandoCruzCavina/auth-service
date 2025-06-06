@@ -15,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.bank.auth_service.dto.AuthenticationToken;
+import com.bank.auth_service.dto.AuthenticationTokenDto;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.exception.InvalidUserCredentialsException;
 import com.bank.auth_service.exception.UserNotFoundException;
@@ -59,7 +59,7 @@ class AuthenticationServiceTest {
         when(request.getHeader("X-Forwarded-For")).thenReturn(null);
         when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        AuthenticationToken token = authenticationService.login(loginUserDto, request);
+        AuthenticationTokenDto token = authenticationService.login(loginUserDto, request);
 
         assertEquals("jwt-token", token.token());
         assertEquals("refresh-token", token.refreshToken());

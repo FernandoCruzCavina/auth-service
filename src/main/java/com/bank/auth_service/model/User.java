@@ -16,7 +16,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,14 +34,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private UserRole userRole;
+    private boolean verified;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<RefreshToken> refreshTokens;
 
-    public User(String email, String password, UserRole userRole) {
+    public User(String email, String password, boolean verified,UserRole userRole) {
         this.email = email;
         this.password = password;
+        this.verified = verified;
         this.userRole = userRole;
     }
 }

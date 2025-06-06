@@ -51,6 +51,10 @@ public class UserAuthenticated implements UserDetails, CredentialsContainer {
             user.setPassword(null);
         }
 
+        public User getUser(){
+            return user;
+        }
+
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()));

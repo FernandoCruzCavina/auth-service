@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.bank.auth_service.dto.AuthenticationToken;
+import com.bank.auth_service.dto.AuthenticationTokenDto;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.exception.InvalidUserCredentialsException;
 import com.bank.auth_service.exception.UserNotFoundException;
@@ -29,7 +29,7 @@ public class AuthenticationService {
         this.refreshTokenService = refreshTokenService;
     }
 
-    public AuthenticationToken login(LoginUserDto loginUserDto, HttpServletRequest request) {
+    public AuthenticationTokenDto login(LoginUserDto loginUserDto, HttpServletRequest request) {
         var user = userRepository.findByEmail(loginUserDto.email())
             .orElseThrow(UserNotFoundException::new);
         
@@ -46,7 +46,7 @@ public class AuthenticationService {
         String token = jwtService.generateToken(userAuthenticated);
         String refreshToken = refreshTokenService.createRefreshToken(ip, userAgent, user);
         
-        return new AuthenticationToken(token, refreshToken);
+        return new AuthenticationTokenDto(token, refreshToken);
     }
     
     public String refreshToken(UUID refreshToken, HttpServletRequest request){

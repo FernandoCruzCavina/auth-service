@@ -12,30 +12,40 @@ import org.springframework.stereotype.Service;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.exception.DontExistOrExpiredCode;
 import com.bank.auth_service.exception.InvalidCodeException;
+import com.bank.auth_service.exception.UserNotFoundException;
 import com.bank.auth_service.model.Code;
+import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
+import com.bank.auth_service.repository.UserRepository;
 
 @Service
 public class VerificationCodeService {
 
 
-    private CodeRepository codeRepository;
+    private final CodeRepository codeRepository;
+    private final UserRepository userRepository;
+    private final CodePublisher codePublisher;
 
-    public VerificationCodeService(CodeRepository codeRepository){
+    public VerificationCodeService(CodeRepository codeRepository, UserRepository userRepository, CodePublisher codePublisher){
         this.codeRepository = codeRepository;
+        this.userRepository = userRepository;
+        this.codePublisher = codePublisher;
     }
 
     public String generateCode(String key){
+        var user = userRepository.findByEmail(key)
+            .orElseThrow(UserNotFoundException::new);
 
         var code = String.format("%06d", new Random().nextInt(1_000_000));
-        var codeModel = new Code(key, code, Instant.now().toEpochMilli());
-        codeRepository.save(codeModel);
+        var codeModel = new Code(user.getEmail(), code, Instant.now().toEpochMilli());
         
+        codeRepository.save(codeModel);
+        codePublisher.publishMessageEmail(user, codeModel);
+
         return code;
     }
 
     public String validateCode(ConfirmCodeDto confirmCode){
-
         Optional<List<Code>> storeCode = codeRepository.findByKey(confirmCode.key());
         Long now = Instant.now().toEpochMilli();
         Optional<Code> validCode = storeCode
@@ -50,8 +60,11 @@ public class VerificationCodeService {
         if(!validCode.get().getCode().equals(confirmCode.code())){
             throw new InvalidCodeException();
         }
-        codeRepository.delete(validCode.get());
 
+        codeRepository.delete(validCode.get());
+        var user = userRepository.findByEmail(confirmCode.key());
+        user.get().setVerified(true);
+        userRepository.save(user.get());
         return "OK! The code is correct!";
     }
 
