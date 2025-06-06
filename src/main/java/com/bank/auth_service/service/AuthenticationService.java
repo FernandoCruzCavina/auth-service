@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.bank.auth_service.dto.AuthenticationToken;
 import com.bank.auth_service.dto.LoginUserDto;
+import com.bank.auth_service.exception.InvalidUserCredentialsException;
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.repository.UserRepository;
 
@@ -34,7 +35,7 @@ public class AuthenticationService {
             System.out.println(user.getEmail());
         var isPasswordValid = passwordEncoder.matches(loginUserDto.password(), user.getPassword());
         if (!isPasswordValid) {
-            throw new RuntimeException("Invalid password");
+            throw new InvalidUserCredentialsException();
         }
         System.out.println(isPasswordValid);
         var userAuthenticated = new UserAuthenticated(user);
