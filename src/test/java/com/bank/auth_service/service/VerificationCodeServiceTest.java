@@ -7,7 +7,11 @@ import com.bank.auth_service.model.Code;
 import com.bank.auth_service.repository.CodeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.List;
@@ -16,20 +20,25 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class VerificationCodeServiceTest {
 
+    @Mock
     private CodeRepository codeRepository;
+    @InjectMocks
     private VerificationCodeService verificationCodeService;
+
+    private static String key;
+    private static String code;
 
     @BeforeEach
     void setUp() {
-        codeRepository = mock(CodeRepository.class);
-        verificationCodeService = new VerificationCodeService(codeRepository);
+        key = "testKey";
+        code = "123456";
     }
 
     @Test
     void generateCode_shouldSaveAndReturnCode() {
-        String key = "testKey";
         ArgumentCaptor<Code> codeCaptor = ArgumentCaptor.forClass(Code.class);
 
         String code = verificationCodeService.generateCode(key);
@@ -43,8 +52,6 @@ class VerificationCodeServiceTest {
 
     @Test
     void validateCode_shouldReturnOkWhenCodeIsValid() {
-        String key = "testKey";
-        String code = "123456";
         long now = Instant.now().toEpochMilli();
         Code codeModel = new Code(key, code, now);
 
@@ -60,8 +67,6 @@ class VerificationCodeServiceTest {
 
     @Test
     void validateCode_shouldThrowInvalidCodeExceptionWhenCodeIsInvalid() {
-        String key = "testKey";
-        String code = "123456";
         long now = Instant.now().toEpochMilli();
         Code codeModel = new Code(key, code, now);
 
@@ -75,8 +80,6 @@ class VerificationCodeServiceTest {
 
     @Test
     void validateCode_shouldThrowInvalidCodeExceptionWhenCodeIsExpired() {
-        String key = "testKey";
-        String code = "123456";
         long expiredTime = Instant.now().minusSeconds(3 * 60).toEpochMilli();
         Code codeModel = new Code(key, code, expiredTime);
 

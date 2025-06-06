@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.bank.auth_service.exception.RefreshTokenExpiredException;
+import com.bank.auth_service.exception.RefreshTokenNotFoundException;
 import com.bank.auth_service.model.RefreshToken;
 import com.bank.auth_service.model.User;
 import com.bank.auth_service.repository.RefreshTokenRepository;
@@ -34,10 +36,10 @@ public class RefreshTokenService {
 
     public RefreshToken validateRefreshToken(UUID token) {
         var stored = refreshTokenRepository.findByRefreshToken(token)
-                .orElseThrow(() -> new RuntimeException("not have this refreshToken in this service"));
+                .orElseThrow(RefreshTokenNotFoundException::new);
 
         if(stored.getExpirationDate() >= Instant.now().toEpochMilli()){
-            throw new RuntimeException("this token already have expired");
+            throw new RefreshTokenExpiredException();
         }
 
         return stored;

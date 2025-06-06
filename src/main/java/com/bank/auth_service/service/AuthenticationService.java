@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.bank.auth_service.dto.AuthenticationToken;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.exception.InvalidUserCredentialsException;
+import com.bank.auth_service.exception.UserNotFoundException;
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.repository.UserRepository;
 
@@ -30,7 +31,7 @@ public class AuthenticationService {
 
     public AuthenticationToken login(LoginUserDto loginUserDto, HttpServletRequest request) {
         var user = userRepository.findByEmail(loginUserDto.email())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(UserNotFoundException::new);
         
             System.out.println(user.getEmail());
         var isPasswordValid = passwordEncoder.matches(loginUserDto.password(), user.getPassword());

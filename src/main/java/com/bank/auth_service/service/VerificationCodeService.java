@@ -1,8 +1,6 @@
 package com.bank.auth_service.service;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -35,6 +33,7 @@ public class VerificationCodeService {
         
         return code;
     }
+
     public String validateCode(ConfirmCodeDto confirmCode){
 
         Optional<List<Code>> storeCode = codeRepository.findByKey(confirmCode.key());

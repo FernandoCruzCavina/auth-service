@@ -26,9 +26,33 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(DontExistOrExpiredCode.class)
-    public ResponseEntity<MessageHandler> handlerInvalidCode(DontExistOrExpiredCode ex){
+    public ResponseEntity<MessageHandler> handlerDontExistOrExpiratedCode(DontExistOrExpiredCode ex){
 
         MessageHandler messageException = new MessageHandler(HttpStatus.BAD_REQUEST, ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageException);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<MessageHandler> handlerUserNotFound(UserNotFoundException ex){
+
+        MessageHandler messageException = new MessageHandler(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageException);
+    }
+
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    public ResponseEntity<MessageHandler> handlerRefreshTokenNotFound(RefreshTokenNotFoundException ex){
+
+        MessageHandler messageException = new MessageHandler(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageException);
+    }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<MessageHandler> handlerRefreshTokenExpired(RefreshTokenExpiredException ex){
+
+        MessageHandler messageException = new MessageHandler(HttpStatus.NOT_FOUND, ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageException);
     }
