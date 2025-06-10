@@ -34,16 +34,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private UserRole userRole;
-    private boolean verified;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<RefreshToken> refreshTokens;
 
-    public User(String email, String password, boolean verified,UserRole userRole) {
+    public User(String email, String password, UserRole userRole) {
         this.email = email;
         this.password = password;
-        this.verified = verified;
         this.userRole = userRole;
     }
 }

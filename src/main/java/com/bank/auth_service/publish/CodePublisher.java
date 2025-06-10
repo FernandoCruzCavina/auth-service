@@ -18,10 +18,10 @@ public class CodePublisher {
     @Value("${broker.queue.email.sender}")
     private String routingEmailKey;
 
-    public void publishMessageEmail(User user, Code code){
+    public void publishMessageEmailWithCodeSecurity(Code code){
         var emailDto = new SendEmailDto();
         
-        emailDto.setEmailTo(user.getEmail());
+        emailDto.setEmailTo(code.getKey());
         emailDto.setSubject("Confirmation with Security Code");
         emailDto.setText("Hello,\n\n"
             + "You have requested a security code. Here is your code:\n\n"
@@ -32,5 +32,9 @@ public class CodePublisher {
             + "Your favorite Bank");
 
         rabbitTemplate.convertAndSend("", routingEmailKey,emailDto);
+    }
+
+    public void publishValidatePayment(String response){
+        rabbitTemplate.convertAndSend("", response);
     }
 }

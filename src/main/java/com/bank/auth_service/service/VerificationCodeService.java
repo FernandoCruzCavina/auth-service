@@ -23,24 +23,20 @@ public class VerificationCodeService {
 
 
     private final CodeRepository codeRepository;
-    private final UserRepository userRepository;
     private final CodePublisher codePublisher;
 
-    public VerificationCodeService(CodeRepository codeRepository, UserRepository userRepository, CodePublisher codePublisher){
+    public VerificationCodeService(CodeRepository codeRepository, CodePublisher codePublisher){
         this.codeRepository = codeRepository;
-        this.userRepository = userRepository;
         this.codePublisher = codePublisher;
     }
 
     public String generateCode(String key){
-        var user = userRepository.findByEmail(key)
-            .orElseThrow(UserNotFoundException::new);
 
         var code = String.format("%06d", new Random().nextInt(1_000_000));
-        var codeModel = new Code(user.getEmail(), code, Instant.now().toEpochMilli());
+        var codeModel = new Code(key, code, Instant.now().toEpochMilli());
         
         codeRepository.save(codeModel);
-        codePublisher.publishMessageEmail(user, codeModel);
+        codePublisher.publishMessageEmailWithCodeSecurity(codeModel);
 
         return code;
     }
@@ -62,9 +58,6 @@ public class VerificationCodeService {
         }
 
         codeRepository.delete(validCode.get());
-        var user = userRepository.findByEmail(confirmCode.key());
-        user.get().setVerified(true);
-        userRepository.save(user.get());
         return "OK! The code is correct!";
     }
 

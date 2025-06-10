@@ -28,15 +28,12 @@ public class JwtService {
         List<String> roles = user.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority).toList();
 
-        boolean verified = user.getUser().isVerified();
-
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("auth-service")
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(expirationTime))
                 .subject(user.getUsername())
                 .claim("roles", roles)
-                .claim("verified", verified)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();   
     }

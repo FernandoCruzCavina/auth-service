@@ -51,7 +51,7 @@ class VerificationCodeServiceTest {
     @Test
     void generateCode_shouldSaveAndReturnCode() {
         ArgumentCaptor<Code> codeCaptor = ArgumentCaptor.forClass(Code.class);
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User("testKey", "password", false, UserRole.USER)));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User("testKey", "password", UserRole.USER)));
 
         String code = verificationCodeService.generateCode(key);
 
@@ -69,7 +69,6 @@ class VerificationCodeServiceTest {
 
         User mockUser = new User();
         mockUser.setEmail(key);
-        mockUser.setVerified(false);
 
         when(userRepository.findByEmail(key)).thenReturn(Optional.of(mockUser));
         when(codeRepository.findByKey(key)).thenReturn(Optional.of(List.of(codeModel)));
