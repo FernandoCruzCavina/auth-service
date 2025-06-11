@@ -17,6 +17,12 @@ public class RabbitmqConfig {
     @Value("${broker.queue.email.sender}")
     public String emailQueue; 
 
+    @Value("${broker.queue.requestNewCode}")
+    public String requestNewCodeQueue;
+
+    @Value("${broker.queue.sendPayment}")
+    public String sendPaymentQueue;
+
     @Bean
     public Queue authQueue() {
         return new Queue(authQueue, true);
@@ -25,6 +31,16 @@ public class RabbitmqConfig {
     @Bean
     public Queue emailQueue(){
         return new Queue(emailQueue, true);
+    }
+
+    @Bean
+    public Queue requestNewCodeQueue() {
+        return new Queue(requestNewCodeQueue, true);
+    }
+
+    @Bean
+    public Queue sendPaymentQueue() {
+        return new Queue(sendPaymentQueue, true);
     }
 
     @Bean

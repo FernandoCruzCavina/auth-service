@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.bank.auth_service.dto.AuthUserDto;
+import com.bank.auth_service.dto.ConclusionPaymentDto;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.enums.UserRole;
 import com.bank.auth_service.model.User;
@@ -31,20 +32,12 @@ public class AuthUserConsumer {
             UserRole.USER
         );
 
-        System.out.println(user.getUserRole());
         userRepository.save(user);
-
-        System.out.println("save user with email: "+ user.getEmail());
     }
 
-    public void listenerPaymentRequest(@Payload String key){
-        verificationCodeService.generateCode(key);
-    }
-
-    public void listenerPaymentValidate(@Payload String inputCode, String key){
-        var confirmationCode = new ConfirmCodeDto(key, inputCode);
-        verificationCodeService.validateCode(confirmationCode);
-        
+    @RabbitListener(queues = "${broker.queue.requestNewCode}")
+    public void generateCode(@Payload String email) {
+        verificationCodeService.generateCode(email);
     }
 }
 

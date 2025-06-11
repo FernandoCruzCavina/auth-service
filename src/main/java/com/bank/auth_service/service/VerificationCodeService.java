@@ -12,15 +12,13 @@ import org.springframework.stereotype.Service;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.exception.DontExistOrExpiredCode;
 import com.bank.auth_service.exception.InvalidCodeException;
-import com.bank.auth_service.exception.UserNotFoundException;
 import com.bank.auth_service.model.Code;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
-import com.bank.auth_service.repository.UserRepository;
+
 
 @Service
 public class VerificationCodeService {
-
 
     private final CodeRepository codeRepository;
     private final CodePublisher codePublisher;
@@ -31,7 +29,6 @@ public class VerificationCodeService {
     }
 
     public String generateCode(String key){
-
         var code = String.format("%06d", new Random().nextInt(1_000_000));
         var codeModel = new Code(key, code, Instant.now().toEpochMilli());
         
@@ -42,13 +39,13 @@ public class VerificationCodeService {
     }
 
     public String validateCode(ConfirmCodeDto confirmCode){
-        Optional<List<Code>> storeCode = codeRepository.findByKey(confirmCode.key());
+        Optional<List<Code>> storeCode = codeRepository.findByKeyCode(confirmCode.key());
         Long now = Instant.now().toEpochMilli();
         Optional<Code> validCode = storeCode
             .flatMap(codes -> codes.stream()
-                .filter(code -> now - code.getCreatedAt() <= 2 * 60 * 1000)
+                .filter(code -> now - code.getCreatedAt() <= 5 * 60 * 1000)
                 .findFirst());
-        
+                
         if(validCode.isEmpty()){
             throw new DontExistOrExpiredCode();
         }
@@ -58,7 +55,8 @@ public class VerificationCodeService {
         }
 
         codeRepository.delete(validCode.get());
-        return "OK! The code is correct!";
+        codePublisher.publishValidatePayment(confirmCode);  
+        return "OK! seu codigo e valido: " + validCode.get().getCode() + " seu pagamento foi realizado com sucesso!";
     }
 
     // private final RedisTemplate<String, String> redisTemplate;

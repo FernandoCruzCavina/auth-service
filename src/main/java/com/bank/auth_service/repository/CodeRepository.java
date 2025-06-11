@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface CodeRepository extends JpaRepository<Code, Long> {
 
-    Optional<List<Code>> findByKey(String key);
+    Optional<List<Code>> findByKeyCode(String key);
 }

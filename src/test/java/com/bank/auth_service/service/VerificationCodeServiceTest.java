@@ -1,14 +1,16 @@
 package com.bank.auth_service.service;
 
-import com.bank.auth_service.dto.ConfirmCodeDto;
-import com.bank.auth_service.enums.UserRole;
-import com.bank.auth_service.exception.DontExistOrExpiredCode;
-import com.bank.auth_service.exception.InvalidCodeException;
-import com.bank.auth_service.model.Code;
-import com.bank.auth_service.model.User;
-import com.bank.auth_service.publish.CodePublisher;
-import com.bank.auth_service.repository.CodeRepository;
-import com.bank.auth_service.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +20,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import com.bank.auth_service.dto.ConfirmCodeDto;
+import com.bank.auth_service.exception.DontExistOrExpiredCode;
+import com.bank.auth_service.exception.InvalidCodeException;
+import com.bank.auth_service.model.Code;
+import com.bank.auth_service.publish.CodePublisher;
+import com.bank.auth_service.repository.CodeRepository;
 
 @ExtendWith(MockitoExtension.class)
 class VerificationCodeServiceTest {
@@ -33,14 +33,12 @@ class VerificationCodeServiceTest {
     @Mock
     private CodeRepository codeRepository;
     @Mock
-    private UserRepository userRepository;
-    @Mock
     private CodePublisher codePublisher;
     @InjectMocks
     private VerificationCodeService verificationCodeService;
 
-    private static String key;
-    private static String code;
+    private String key;
+    private String code;
 
     @BeforeEach
     void setUp() {
@@ -49,17 +47,17 @@ class VerificationCodeServiceTest {
     }
 
     @Test
-    void generateCode_shouldSaveAndReturnCode() {
+    void generateCode_shouldSaveAndReturnCodeAndPublish() {
         ArgumentCaptor<Code> codeCaptor = ArgumentCaptor.forClass(Code.class);
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User("testKey", "password", UserRole.USER)));
 
-        String code = verificationCodeService.generateCode(key);
+        String generatedCode = verificationCodeService.generateCode(key);
 
         verify(codeRepository).save(codeCaptor.capture());
-        assertEquals(key, codeCaptor.getValue().getKey());
-        assertEquals(code, codeCaptor.getValue().getCode());
-        assertNotNull(code);
-        assertEquals(6, code.length());
+        verify(codePublisher).publishMessageEmailWithCodeSecurity(codeCaptor.getValue());
+        assertEquals(key, codeCaptor.getValue().getKeyCode());
+        assertEquals(generatedCode, codeCaptor.getValue().getCode());
+        assertNotNull(generatedCode);
+        assertEquals(6, generatedCode.length());
     }
 
     @Test
@@ -67,18 +65,15 @@ class VerificationCodeServiceTest {
         long now = Instant.now().toEpochMilli();
         Code codeModel = new Code(key, code, now);
 
-        User mockUser = new User();
-        mockUser.setEmail(key);
+        when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));
 
-        when(userRepository.findByEmail(key)).thenReturn(Optional.of(mockUser));
-        when(codeRepository.findByKey(key)).thenReturn(Optional.of(List.of(codeModel)));
-
-        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code);
+        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
 
         String result = verificationCodeService.validateCode(confirmCode);
 
         verify(codeRepository).delete(codeModel);
-        assertEquals("OK! The code is correct!", result);
+        verify(codePublisher).publishValidatePayment(confirmCode);
+        assertEquals("OK! seu codigo e valido: " + code + " seu pagamento foi realizado com sucesso!", result);
     }
 
     @Test
@@ -86,24 +81,37 @@ class VerificationCodeServiceTest {
         long now = Instant.now().toEpochMilli();
         Code codeModel = new Code(key, code, now);
 
-        when(codeRepository.findByKey(key)).thenReturn(Optional.of(List.of(codeModel)));
+        when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));
 
-        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, "wrongCode");
+        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, "wrongCode", 1L, "pix", 2L, "desc", null);
 
         assertThrows(InvalidCodeException.class, () -> verificationCodeService.validateCode(confirmCode));
         verify(codeRepository, never()).delete(any());
+        verify(codePublisher, never()).publishValidatePayment(any());
     }
 
     @Test
-    void validateCode_shouldThrowInvalidCodeExceptionWhenCodeIsExpired() {
+    void validateCode_shouldThrowDontExistOrExpiredCodeWhenCodeIsExpired() {
         long expiredTime = Instant.now().minusSeconds(3 * 60).toEpochMilli();
         Code codeModel = new Code(key, code, expiredTime);
 
-        when(codeRepository.findByKey(key)).thenReturn(Optional.of(List.of(codeModel)));
+        when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));
 
-        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code);
+        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
 
         assertThrows(DontExistOrExpiredCode.class, () -> verificationCodeService.validateCode(confirmCode));
         verify(codeRepository, never()).delete(any());
+        verify(codePublisher, never()).publishValidatePayment(any());
+    }
+
+    @Test
+    void validateCode_shouldThrowDontExistOrExpiredCodeWhenNoCodeFound() {
+        when(codeRepository.findByKeyCode(key)).thenReturn(Optional.empty());
+
+        ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
+
+        assertThrows(DontExistOrExpiredCode.class, () -> verificationCodeService.validateCode(confirmCode));
+        verify(codeRepository, never()).delete(any());
+        verify(codePublisher, never()).publishValidatePayment(any());
     }
 }
