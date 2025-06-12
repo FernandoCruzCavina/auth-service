@@ -1,5 +1,6 @@
 package com.bank.auth_service.service;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +10,9 @@ import com.bank.auth_service.dto.AuthenticationTokenDto;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.exception.InvalidUserCredentialsException;
 import com.bank.auth_service.exception.UserNotFoundException;
+import com.bank.auth_service.model.User;
 import com.bank.auth_service.model.UserAuthenticated;
+import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,16 +20,19 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class AuthenticationService {
 
+    private final CodePublisher codePublisher;
+
     private JwtService jwtService;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private RefreshTokenService refreshTokenService;
 
-    AuthenticationService(JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
+    AuthenticationService(JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService, CodePublisher codePublisher) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
+        this.codePublisher = codePublisher;
     }
 
     public AuthenticationTokenDto login(LoginUserDto loginUserDto, HttpServletRequest request) {
@@ -59,7 +65,7 @@ public class AuthenticationService {
         var userAgentDatabase = tokenValidated.getUserAgent();
         
         if(!ipDatabase.equals(ip) && !userAgentDatabase.equals(userAgent)){
-            //email service active and warning this probabily danger
+            codePublisher.publishMessageEmailWithUnusualAccessWarning(tokenValidated.getUser().getEmail(),ip,userAgent,Instant.now());
         }
         var userAuthenticated = new UserAuthenticated(tokenValidated.getUser());
         var newToken = jwtService.generateToken(userAuthenticated);

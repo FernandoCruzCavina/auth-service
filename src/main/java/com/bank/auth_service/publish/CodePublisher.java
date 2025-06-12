@@ -13,7 +13,6 @@ import com.bank.auth_service.dto.ConclusionPaymentDto;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.dto.SendEmailDto;
 import com.bank.auth_service.model.Code;
-import com.bank.auth_service.model.User;
 
 @Component
 public class CodePublisher {
@@ -46,6 +45,29 @@ public class CodePublisher {
             + "Seu banco de confiança");
 
         rabbitTemplate.convertAndSend("", routingEmailKey,emailDto);
+    }
+
+    public void publishMessageEmailWithUnusualAccessWarning(String email, String ip, String userAgent, Instant detectedAt) {
+        var emailDto = new SendEmailDto();
+
+        String formattedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                .withZone(ZoneId.of("America/Sao_Paulo"))
+                .format(detectedAt);
+
+        emailDto.setEmailTo(email);
+        emailDto.setSubject("Aviso de Acesso Incomum Detectado");
+        emailDto.setText("Olá,\n\n"
+            + "Detectamos uma tentativa de acesso com um IP ou navegador diferente do usual associado à sua conta.\n\n"
+            + "Informações do acesso:\n"
+            + "- IP: " + ip + "\n"
+            + "- Navegador (User-Agent): " + userAgent + "\n"
+            + "- Data e Hora: " + formattedDate + "\n\n"
+            + "Se esta tentativa foi feita por você, nenhuma ação adicional é necessária.\n"
+            + "Caso contrário, recomendamos que altere sua senha imediatamente e entre em contato com o suporte.\n\n"
+            + "Atenciosamente,\n"
+            + "Equipe de Segurança");
+
+        rabbitTemplate.convertAndSend("", routingEmailKey, emailDto);
     }
 
     public void publishValidatePayment(ConfirmCodeDto confirmCodeDto){

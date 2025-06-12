@@ -28,7 +28,7 @@ public class RefreshTokenService {
         UUID token = UUID.randomUUID();
         long expirationDate = Instant.now().plusSeconds(refreshExpiration).toEpochMilli();
 
-        RefreshToken refreshToken = new RefreshToken(expirationDate, ip, userAgent, user);
+        RefreshToken refreshToken = new RefreshToken(token, expirationDate, ip, userAgent, user);
         refreshTokenRepository.save(refreshToken);
 
         return token.toString();

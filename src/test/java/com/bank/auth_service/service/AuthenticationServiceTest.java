@@ -21,6 +21,7 @@ import com.bank.auth_service.exception.InvalidUserCredentialsException;
 import com.bank.auth_service.exception.UserNotFoundException;
 import com.bank.auth_service.model.User;
 import com.bank.auth_service.model.UserAuthenticated;
+import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ class AuthenticationServiceTest {
     private PasswordEncoder passwordEncoder;
     private RefreshTokenService refreshTokenService;
     private AuthenticationService authenticationService;
+    private CodePublisher codePublisher;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +42,8 @@ class AuthenticationServiceTest {
         userRepository = mock(UserRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
         refreshTokenService = mock(RefreshTokenService.class);
-        authenticationService = new AuthenticationService(jwtService, userRepository, passwordEncoder, refreshTokenService);
+        codePublisher = mock(CodePublisher.class);
+        authenticationService = new AuthenticationService(jwtService, userRepository, passwordEncoder, refreshTokenService, codePublisher);
     }
 
     @Test

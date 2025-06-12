@@ -25,7 +25,6 @@ import lombok.Setter;
 public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID refreshToken;
     private long expirationDate;
     private String ip;
