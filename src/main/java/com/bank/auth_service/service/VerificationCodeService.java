@@ -10,7 +10,7 @@ import java.util.Random;
 import org.springframework.stereotype.Service;
 
 import com.bank.auth_service.dto.ConfirmCodeDto;
-import com.bank.auth_service.exception.DontExistOrExpiredCode;
+import com.bank.auth_service.exception.DontExistOrExpiredCodeException;
 import com.bank.auth_service.exception.InvalidCodeException;
 import com.bank.auth_service.model.Code;
 import com.bank.auth_service.publish.CodePublisher;
@@ -47,7 +47,7 @@ public class VerificationCodeService {
                 .findFirst());
                 
         if(validCode.isEmpty()){
-            throw new DontExistOrExpiredCode();
+            throw new DontExistOrExpiredCodeException();
         }
 
         if(!validCode.get().getCode().equals(confirmCode.code())){

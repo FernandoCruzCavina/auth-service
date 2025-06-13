@@ -34,7 +34,6 @@ public class CodePublisher {
                 .format(createdInstant);
 
         emailDto.setEmailTo(code.getKeyCode());
-        emailDto.setSubject("Confirmation with Security Code");
         emailDto.setSubject("Confirmação com Código de Segurança");
         emailDto.setText("Olá,\n\n"
             + "Você solicitou um código de segurança. Aqui está o seu código:\n\n"

@@ -10,7 +10,6 @@ import com.bank.auth_service.dto.AuthenticationTokenDto;
 import com.bank.auth_service.dto.LoginUserDto;
 import com.bank.auth_service.exception.InvalidUserCredentialsException;
 import com.bank.auth_service.exception.UserNotFoundException;
-import com.bank.auth_service.model.User;
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.UserRepository;

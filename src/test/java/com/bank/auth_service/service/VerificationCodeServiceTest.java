@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bank.auth_service.dto.ConfirmCodeDto;
-import com.bank.auth_service.exception.DontExistOrExpiredCode;
+import com.bank.auth_service.exception.DontExistOrExpiredCodeException;
 import com.bank.auth_service.exception.InvalidCodeException;
 import com.bank.auth_service.model.Code;
 import com.bank.auth_service.publish.CodePublisher;
@@ -99,7 +99,7 @@ class VerificationCodeServiceTest {
 
         ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
 
-        assertThrows(DontExistOrExpiredCode.class, () -> verificationCodeService.validateCode(confirmCode));
+        assertThrows(DontExistOrExpiredCodeException.class, () -> verificationCodeService.validateCode(confirmCode));
         verify(codeRepository, never()).delete(any());
         verify(codePublisher, never()).publishValidatePayment(any());
     }
@@ -110,7 +110,7 @@ class VerificationCodeServiceTest {
 
         ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
 
-        assertThrows(DontExistOrExpiredCode.class, () -> verificationCodeService.validateCode(confirmCode));
+        assertThrows(DontExistOrExpiredCodeException.class, () -> verificationCodeService.validateCode(confirmCode));
         verify(codeRepository, never()).delete(any());
         verify(codePublisher, never()).publishValidatePayment(any());
     }

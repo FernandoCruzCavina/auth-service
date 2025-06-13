@@ -25,12 +25,12 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageException);
     }
 
-    @ExceptionHandler(DontExistOrExpiredCode.class)
-    public ResponseEntity<MessageHandler> handlerDontExistOrExpiratedCode(DontExistOrExpiredCode ex){
+    @ExceptionHandler(DontExistOrExpiredCodeException.class)
+    public ResponseEntity<MessageHandler> handlerDontExistOrExpiratedCode(DontExistOrExpiredCodeException ex){
 
         MessageHandler messageException = new MessageHandler(HttpStatus.BAD_REQUEST, ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageException);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageException);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
