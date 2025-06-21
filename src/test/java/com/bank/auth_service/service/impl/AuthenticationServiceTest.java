@@ -1,4 +1,4 @@
-package com.bank.auth_service.service;
+package com.bank.auth_service.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,6 +23,9 @@ import com.bank.auth_service.model.User;
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.UserRepository;
+import com.bank.auth_service.service.AuthenticationService;
+import com.bank.auth_service.service.JwtService;
+import com.bank.auth_service.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -33,7 +36,7 @@ class AuthenticationServiceTest {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private RefreshTokenService refreshTokenService;
-    private AuthenticationService authenticationService;
+    private AuthenticationServiceImpl authenticationService;
     private CodePublisher codePublisher;
 
     @BeforeEach
@@ -43,7 +46,7 @@ class AuthenticationServiceTest {
         passwordEncoder = mock(PasswordEncoder.class);
         refreshTokenService = mock(RefreshTokenService.class);
         codePublisher = mock(CodePublisher.class);
-        authenticationService = new AuthenticationService(jwtService, userRepository, passwordEncoder, refreshTokenService, codePublisher);
+        authenticationService = new AuthenticationServiceImpl(jwtService, userRepository, passwordEncoder, refreshTokenService, codePublisher);
     }
 
     @Test

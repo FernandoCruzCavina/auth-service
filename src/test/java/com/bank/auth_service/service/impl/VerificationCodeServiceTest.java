@@ -1,4 +1,4 @@
-package com.bank.auth_service.service;
+package com.bank.auth_service.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,7 +35,7 @@ class VerificationCodeServiceTest {
     @Mock
     private CodePublisher codePublisher;
     @InjectMocks
-    private VerificationCodeService verificationCodeService;
+    private VerificationCodeServiceImpl verificationCodeService;
 
     private String key;
     private String code;
@@ -92,7 +92,7 @@ class VerificationCodeServiceTest {
 
     @Test
     void validateCode_shouldThrowDontExistOrExpiredCodeWhenCodeIsExpired() {
-        long expiredTime = Instant.now().minusSeconds(3 * 60).toEpochMilli();
+        long expiredTime = Instant.now().minusSeconds(5 * 60).toEpochMilli();
         Code codeModel = new Code(key, code, expiredTime);
 
         when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));

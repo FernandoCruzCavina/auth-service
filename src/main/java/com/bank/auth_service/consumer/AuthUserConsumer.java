@@ -7,8 +7,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.bank.auth_service.dto.AuthUserDto;
-import com.bank.auth_service.dto.ConclusionPaymentDto;
-import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.enums.UserRole;
 import com.bank.auth_service.model.User;
 import com.bank.auth_service.repository.UserRepository;
