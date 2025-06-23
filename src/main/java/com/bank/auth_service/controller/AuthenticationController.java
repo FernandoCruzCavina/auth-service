@@ -10,25 +10,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bank.auth_service.dto.AuthenticationTokenDto;
-import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.dto.LoginUserDto;
+import com.bank.auth_service.exception.InvalidUserCredentialsException;
+import com.bank.auth_service.exception.RefreshTokenExpiredException;
+import com.bank.auth_service.exception.RefreshTokenNotFoundException;
+import com.bank.auth_service.exception.UserNotFoundException;
 import com.bank.auth_service.service.AuthenticationService;
-import com.bank.auth_service.service.VerificationCodeService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+/** 
+ * Controller for handling authentication-related requests.
+ * Provides endpoints for user login and token refresh operations.
+ * 
+ * @author Fernando Cruz Cavina
+ * @version 1.0, 06/23/2025
+ * @see AuthenticationService
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private VerificationCodeService verificationCodeService;
 
-    public AuthenticationController(AuthenticationService authenticationService, VerificationCodeService verificationCodeService) {
+    public AuthenticationController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
-        this.verificationCodeService = verificationCodeService;
     }
 
+    /**
+     * Authenticates a user with email and password, generating authentication tokens.
+     * 
+     * @param loginUserDto the login credentials (email and password)
+     * @param httpServletRequest the HTTP request (used to capture IP and user-agent)
+     * @return {@link AuthenticationTokenDto} containing the JWT access token and refresh token
+     * @throws InvalidUserCredentialsException if the provided credentials are invalid
+     * @throws UserNotFoundException if the user does not exist
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationTokenDto> authenticate(@RequestBody LoginUserDto loginUserDto, HttpServletRequest httpServletRequest) {
         AuthenticationTokenDto tokens = authenticationService.login(loginUserDto, httpServletRequest);
@@ -36,25 +53,19 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.OK).body(tokens);
     }
 
+    /**
+     * Refreshes the authentication token using a valid refresh token.
+     * 
+     * @param refreshToken the UUID of the refresh token issued at login
+     * @param httpServletRequest the HTTP servlet request containing client metadata
+     * @return new JWT authentication token as a String
+     * @throws RefreshTokenNotFoundException if the refresh token does not exist
+     * @throws RefreshTokenExpiredException if the refresh token has expired
+     */
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(@RequestBody UUID refreshToken, HttpServletRequest httpServletRequest) {
         String newToken = authenticationService.refreshToken(refreshToken, httpServletRequest);
         
         return ResponseEntity.status(HttpStatus.OK).body(newToken);
     }
-
-    @PostMapping("/generate")
-    public ResponseEntity<String> generate(@RequestBody String userId) {
-        String code = verificationCodeService.generateCode(userId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(code);
-    }
-
-    @PostMapping("/validate")
-    public ResponseEntity<String> validateCode(@RequestBody ConfirmCodeDto confirmCode) {
-        String message = verificationCodeService.validateCode(confirmCode);
-        
-        return ResponseEntity.status(HttpStatus.OK).body(message);
-    }
-    
 }

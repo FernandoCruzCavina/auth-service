@@ -8,6 +8,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * Implementation of {@link UserDetails} and {@link CredentialsContainer} for authenticated users.
+ * Used by Spring Security to represent the authenticated user's details and authorities.
+ * 
+ * @author Fernando Cruz Cavina
+ * @version 1.0, 06/23/2025
+ * @since 1.0
+ */
 public class UserAuthenticated implements UserDetails, CredentialsContainer {
     
         private final User user;

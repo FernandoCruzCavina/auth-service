@@ -14,6 +14,21 @@ import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.dto.SendEmailDto;
 import com.bank.auth_service.model.Code;
 
+/**
+ * Handles the publication of messages to RabbitMQ queues for email notifications
+ * and payment confirmations.
+ * 
+ * <p>This class publishes:</p>
+ * <ul>
+ *   <li>Security code emails</li>
+ *   <li>Unusual access warnings</li>
+ *   <li>Payment confirmation messages</li>
+ * </ul>
+ * 
+ * @author Fernando Cruz Cavina
+ * @version 1.0, 06/23/2025
+ * @since 1.0
+ */
 @Component
 public class CodePublisher {
     
@@ -26,6 +41,11 @@ public class CodePublisher {
     @Value("${broker.queue.sendPayment}")
     private String routingPaymentKey;
 
+    /**
+     * Publishes an email message containing a security code to the user.
+     * 
+     * @param code the security code to be sent
+     */
     public void publishMessageEmailWithCodeSecurity(Code code){
         var emailDto = new SendEmailDto();
         Instant createdInstant = Instant.ofEpochMilli(code.getCreatedAt());
@@ -45,7 +65,14 @@ public class CodePublisher {
 
         rabbitTemplate.convertAndSend("", routingEmailKey,emailDto);
     }
-
+    /**
+     * Publishes a warning email about an unusual access attempt with mismatched IP or device.
+     * 
+     * @param email the email address to send the warning to
+     * @param ip the IP address from which the unusual access was detected
+     * @param userAgent the user agent string of the browser or device used for access
+     * @param detectedAt the timestamp when the unusual access was detected
+     */
     public void publishMessageEmailWithUnusualAccessWarning(String email, String ip, String userAgent, Instant detectedAt) {
         var emailDto = new SendEmailDto();
 
@@ -69,6 +96,11 @@ public class CodePublisher {
         rabbitTemplate.convertAndSend("", routingEmailKey, emailDto);
     }
 
+    /**
+     * Publishes a payment confirmation message to the appropriate RabbitMQ queue
+     * after successful code validation.
+     * @param confirmCodeDto the DTO containing payment confirmation details
+     */
     public void publishValidatePayment(ConfirmCodeDto confirmCodeDto){
         var conclusionPaymentDto = new ConclusionPaymentDto(
             confirmCodeDto.idAccount(),

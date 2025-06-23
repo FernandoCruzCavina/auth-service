@@ -21,14 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bank.auth_service.dto.ConfirmCodeDto;
-import com.bank.auth_service.exception.DontExistOrExpiredCodeException;
+import com.bank.auth_service.exception.CodeNotFoundOrExpiredException;
 import com.bank.auth_service.exception.InvalidCodeException;
 import com.bank.auth_service.model.Code;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
 
 @ExtendWith(MockitoExtension.class)
-class VerificationCodeServiceTest {
+class VerificationCodeServiceImplTest {
 
     @Mock
     private CodeRepository codeRepository;
@@ -55,9 +55,8 @@ class VerificationCodeServiceTest {
         verify(codeRepository).save(codeCaptor.capture());
         verify(codePublisher).publishMessageEmailWithCodeSecurity(codeCaptor.getValue());
         assertEquals(key, codeCaptor.getValue().getKeyCode());
-        assertEquals(generatedCode, codeCaptor.getValue().getCode());
+        assertEquals(generatedCode, "Código gerado com sucesso! Verifique seu e-mail para confirmar o pagamento.");
         assertNotNull(generatedCode);
-        assertEquals(6, generatedCode.length());
     }
 
     @Test
@@ -91,7 +90,7 @@ class VerificationCodeServiceTest {
     }
 
     @Test
-    void validateCode_shouldThrowDontExistOrExpiredCodeWhenCodeIsExpired() {
+    void validateCode_shouldThrowCodeNotFoundOrExpiredWhenCodeIsExpired() {
         long expiredTime = Instant.now().minusSeconds(5 * 60).toEpochMilli();
         Code codeModel = new Code(key, code, expiredTime);
 
@@ -99,18 +98,18 @@ class VerificationCodeServiceTest {
 
         ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
 
-        assertThrows(DontExistOrExpiredCodeException.class, () -> verificationCodeService.validateCode(confirmCode));
+        assertThrows(CodeNotFoundOrExpiredException.class, () -> verificationCodeService.validateCode(confirmCode));
         verify(codeRepository, never()).delete(any());
         verify(codePublisher, never()).publishValidatePayment(any());
     }
 
     @Test
-    void validateCode_shouldThrowDontExistOrExpiredCodeWhenNoCodeFound() {
+    void validateCode_shouldThrowCodeNotFoundOrExpiredWhenNoCodeFound() {
         when(codeRepository.findByKeyCode(key)).thenReturn(Optional.empty());
 
         ConfirmCodeDto confirmCode = new ConfirmCodeDto(key, code, 1L, "pix", 2L, "desc", null);
 
-        assertThrows(DontExistOrExpiredCodeException.class, () -> verificationCodeService.validateCode(confirmCode));
+        assertThrows(CodeNotFoundOrExpiredException.class, () -> verificationCodeService.validateCode(confirmCode));
         verify(codeRepository, never()).delete(any());
         verify(codePublisher, never()).publishValidatePayment(any());
     }

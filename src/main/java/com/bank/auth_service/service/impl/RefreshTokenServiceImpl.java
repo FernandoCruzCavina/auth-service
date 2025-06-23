@@ -10,8 +10,9 @@ import com.bank.auth_service.exception.RefreshTokenNotFoundException;
 import com.bank.auth_service.model.RefreshToken;
 import com.bank.auth_service.model.User;
 import com.bank.auth_service.repository.RefreshTokenRepository;
+import com.bank.auth_service.service.RefreshTokenService;
 
-public class RefreshTokenServiceImpl {
+public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     @Value("${jwt.refresh.expiration}")
     private long refreshExpiration;

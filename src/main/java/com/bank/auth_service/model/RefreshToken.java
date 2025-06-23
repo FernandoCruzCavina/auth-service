@@ -14,6 +14,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity representing a refresh token for user authentication.
+ * Stores the token, expiration date, client information, and associated user.
+ * 
+ * @author Fernando Cruz Cavina
+ * @version 1.0, 06/23/2025
+ * @since 1.0
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -30,7 +38,15 @@ public class RefreshToken {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    
+
+    /**
+     * Constructs a new RefreshToken with the specified expiration, client info, and user.
+     *
+     * @param expirationDate the expiration timestamp
+     * @param ip the IP address of the client
+     * @param userAgent the user agent string of the client
+     * @param user the associated user
+     */
     public RefreshToken(long expirationDate, String ip, String userAgent, User user) {
         this.expirationDate = expirationDate;
         this.ip = ip;

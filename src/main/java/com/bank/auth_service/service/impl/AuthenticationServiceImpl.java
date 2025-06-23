@@ -13,13 +13,14 @@ import com.bank.auth_service.exception.UserNotFoundException;
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.UserRepository;
+import com.bank.auth_service.service.AuthenticationService;
 import com.bank.auth_service.service.JwtService;
 import com.bank.auth_service.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class AuthenticationServiceImpl {
+public class AuthenticationServiceImpl implements AuthenticationService {
     
     private CodePublisher codePublisher;
     private JwtService jwtService;
@@ -39,12 +40,11 @@ public class AuthenticationServiceImpl {
         var user = userRepository.findByEmail(loginUserDto.email())
             .orElseThrow(UserNotFoundException::new);
         
-            System.out.println(user.getEmail());
         var isPasswordValid = passwordEncoder.matches(loginUserDto.password(), user.getPassword());
         if (!isPasswordValid) {
             throw new InvalidUserCredentialsException();
         }
-        System.out.println(isPasswordValid);
+
         var userAuthenticated = new UserAuthenticated(user);
         var ip = getIpAddress(request);
         var userAgent = request.getHeader("User-Agent");

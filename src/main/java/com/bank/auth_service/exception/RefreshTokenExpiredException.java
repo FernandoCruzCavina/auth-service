@@ -1,8 +1,19 @@
 package com.bank.auth_service.exception;
 
-public class RefreshTokenExpiredException extends RuntimeException{
+/**
+ * Exception thrown when a refresh token has expired.
+ * Used to indicate that the token is no longer valid for refreshing authentication.
+ * 
+ * @author Fernando Cruz Cavina
+ * @version 1.0, 06/23/2025
+ * @since 1.0
+ */
+public class RefreshTokenExpiredException extends RuntimeException {
 
-    public RefreshTokenExpiredException(){
-        super("Esse token já foi expirado");
+    /**
+     * Constructs a new RefreshTokenExpiredException with a default error message.
+     */
+    public RefreshTokenExpiredException() {
+        super("O refresh token está expirado");
     }
 }

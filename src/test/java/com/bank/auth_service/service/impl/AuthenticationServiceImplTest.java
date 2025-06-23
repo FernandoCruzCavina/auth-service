@@ -23,28 +23,25 @@ import com.bank.auth_service.model.User;
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.UserRepository;
-import com.bank.auth_service.service.AuthenticationService;
-import com.bank.auth_service.service.JwtService;
-import com.bank.auth_service.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationServiceTest {
+class AuthenticationServiceImplTest {
 
-    private JwtService jwtService;
+    private JwtServiceImpl jwtService;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private RefreshTokenService refreshTokenService;
+    private RefreshTokenServiceImpl refreshTokenService;
     private AuthenticationServiceImpl authenticationService;
     private CodePublisher codePublisher;
 
     @BeforeEach
     void setUp() {
-        jwtService = mock(JwtService.class);
+        jwtService = mock(JwtServiceImpl.class);
         userRepository = mock(UserRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
-        refreshTokenService = mock(RefreshTokenService.class);
+        refreshTokenService = mock(RefreshTokenServiceImpl.class);
         codePublisher = mock(CodePublisher.class);
         authenticationService = new AuthenticationServiceImpl(jwtService, userRepository, passwordEncoder, refreshTokenService, codePublisher);
     }
@@ -56,7 +53,6 @@ class AuthenticationServiceTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(userRepository.findByEmail(loginUserDto.email())).thenReturn(Optional.of(user));
-        when(user.getEmail()).thenReturn(loginUserDto.email());
         when(user.getPassword()).thenReturn("hashedPassword");
         when(passwordEncoder.matches(loginUserDto.password(), "hashedPassword")).thenReturn(true);
         when(jwtService.generateToken(any(UserAuthenticated.class))).thenReturn("jwt-token");
@@ -88,7 +84,6 @@ class AuthenticationServiceTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(userRepository.findByEmail(loginUserDto.email())).thenReturn(Optional.of(user));
-        when(user.getEmail()).thenReturn(loginUserDto.email());
         when(user.getPassword()).thenReturn("hashedPassword");
         when(passwordEncoder.matches(loginUserDto.password(), "hashedPassword")).thenReturn(false);
 

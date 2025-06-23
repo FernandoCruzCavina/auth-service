@@ -6,13 +6,14 @@ import java.util.Optional;
 import java.util.Random;
 
 import com.bank.auth_service.dto.ConfirmCodeDto;
-import com.bank.auth_service.exception.DontExistOrExpiredCodeException;
+import com.bank.auth_service.exception.CodeNotFoundOrExpiredException;
 import com.bank.auth_service.exception.InvalidCodeException;
 import com.bank.auth_service.model.Code;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
+import com.bank.auth_service.service.VerificationCodeService;
 
-public class VerificationCodeServiceImpl{
+public class VerificationCodeServiceImpl implements VerificationCodeService{
 
     private final CodeRepository codeRepository;
     private final CodePublisher codePublisher;
@@ -29,7 +30,7 @@ public class VerificationCodeServiceImpl{
         codeRepository.save(codeModel);
         codePublisher.publishMessageEmailWithCodeSecurity(codeModel);
 
-        return code;
+        return "Código gerado com sucesso! Verifique seu e-mail para confirmar o pagamento.";
     }
 
     public String validateCode(ConfirmCodeDto confirmCode){
@@ -41,7 +42,7 @@ public class VerificationCodeServiceImpl{
                 .findFirst());
                 
         if(validCode.isEmpty()){
-            throw new DontExistOrExpiredCodeException();
+            throw new CodeNotFoundOrExpiredException();
         }
 
         if(!validCode.get().getCode().equals(confirmCode.code())){
