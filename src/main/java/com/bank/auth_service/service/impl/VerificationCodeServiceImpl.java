@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.springframework.stereotype.Service;
+
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.exception.CodeNotFoundOrExpiredException;
 import com.bank.auth_service.exception.InvalidCodeException;
@@ -13,6 +15,7 @@ import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
 import com.bank.auth_service.service.VerificationCodeService;
 
+@Service
 public class VerificationCodeServiceImpl implements VerificationCodeService{
 
     private final CodeRepository codeRepository;

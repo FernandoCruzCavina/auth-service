@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.bank.auth_service.exception.RefreshTokenExpiredException;
 import com.bank.auth_service.exception.RefreshTokenNotFoundException;
@@ -12,6 +13,7 @@ import com.bank.auth_service.model.User;
 import com.bank.auth_service.repository.RefreshTokenRepository;
 import com.bank.auth_service.service.RefreshTokenService;
 
+@Service
 public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     @Value("${jwt.refresh.expiration}")

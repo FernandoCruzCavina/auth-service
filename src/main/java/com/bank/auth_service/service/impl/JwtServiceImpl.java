@@ -8,10 +8,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.stereotype.Service;
 
 import com.bank.auth_service.model.UserAuthenticated;
 import com.bank.auth_service.service.JwtService;
 
+@Service
 public class JwtServiceImpl implements JwtService {
     @Value("${jwt.expiration}")
     private long expirationTime;  
