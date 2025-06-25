@@ -18,8 +18,8 @@ import java.math.BigDecimal;
  * @param amountPaid the total amount paid in the transaction
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 public record ConfirmCodeDto(
     String key,

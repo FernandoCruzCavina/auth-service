@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Provides endpoints for generating and validating verification codes.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see VerificationCodeService
- * @since 1.0
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping("/code")

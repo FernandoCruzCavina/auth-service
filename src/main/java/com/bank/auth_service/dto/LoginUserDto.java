@@ -9,8 +9,8 @@ package com.bank.auth_service.dto;
  * @param password the user's password
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 public record LoginUserDto(
     String email,

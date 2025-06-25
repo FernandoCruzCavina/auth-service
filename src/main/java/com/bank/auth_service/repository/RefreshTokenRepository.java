@@ -13,9 +13,9 @@ import com.bank.auth_service.model.RefreshToken;
  * Handles access to refresh token data.
  *
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see RefreshToken
- * @since 1.0
+ * @since 1.0.0
  */
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID>{
 

@@ -15,9 +15,9 @@ import java.util.UUID;
  * A refresh token allows users to obtain new JWT tokens without logging in again.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see RefreshTokenRepository
- * @since 1.0
+ * @since 1.0.0
  */
 public interface RefreshTokenService {
 

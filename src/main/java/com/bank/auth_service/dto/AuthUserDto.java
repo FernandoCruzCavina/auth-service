@@ -14,8 +14,8 @@ import com.bank.auth_service.enums.UserRole;
  * @param userRole the role of the user (e.g., ADMIN, USER)
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 public record AuthUserDto(
     String email,

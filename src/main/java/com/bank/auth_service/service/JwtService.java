@@ -8,11 +8,11 @@ import com.bank.auth_service.model.UserAuthenticated;
  * Provides functionality for generating JWTs for authenticated users.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see UserAuthenticated
  * @see KeyConfig
  * @see <a href="https://jwt.io/">JWT.io</a>
- * @since 1.0
+ * @since 1.0.0
  */
 public interface JwtService {
 

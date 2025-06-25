@@ -5,8 +5,8 @@ package com.bank.auth_service.exception;
  * Used to indicate that the requested user does not exist.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 public class UserNotFoundException extends RuntimeException {
 

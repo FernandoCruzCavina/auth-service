@@ -5,8 +5,8 @@ package com.bank.auth_service.exception;
  * Used to indicate that the token is no longer valid for refreshing authentication.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 public class RefreshTokenExpiredException extends RuntimeException {
 

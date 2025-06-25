@@ -13,8 +13,8 @@ import lombok.Setter;
  * Encapsulates the HTTP status and error message.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 @Getter
 @Setter

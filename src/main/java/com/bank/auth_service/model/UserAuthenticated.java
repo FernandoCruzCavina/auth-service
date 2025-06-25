@@ -13,8 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
  * Used by Spring Security to represent the authenticated user's details and authorities.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 public class UserAuthenticated implements UserDetails, CredentialsContainer {
     

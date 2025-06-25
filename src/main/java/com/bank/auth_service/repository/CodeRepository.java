@@ -11,9 +11,9 @@ import java.util.Optional;
  * Provides database access methods for verification codes.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see Code
- * @since 1.0
+ * @since 1.0.0
  */
 public interface CodeRepository extends JpaRepository<Code, Long> {
 

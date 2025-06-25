@@ -19,15 +19,15 @@ import lombok.Setter;
  * Stores the token, expiration date, client information, and associated user.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "refresh_token")
+@Table(name = "refresh_token_tb")
 public class RefreshToken {
 
     @Id

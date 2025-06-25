@@ -23,9 +23,9 @@ import jakarta.servlet.http.HttpServletRequest;
  * Provides endpoints for user login and token refresh operations.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see AuthenticationService
- * @since 1.0
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping("/auth")

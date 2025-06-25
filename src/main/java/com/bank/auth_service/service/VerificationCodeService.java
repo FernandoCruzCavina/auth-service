@@ -13,9 +13,9 @@ import com.bank.auth_service.repository.CodeRepository;
  * Actually used for sensitive actions such as confim payments or password resets.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see CodeRepository
- * @since 1.0
+ * @since 1.0.0
  */
 public interface VerificationCodeService {
 

@@ -17,9 +17,9 @@ import jakarta.servlet.http.HttpServletRequest;
  * including user login with email and password, and login with token refresh functionality.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see UserRepository
- * @since 1.0
+ * @since 1.0.0
  */
 public interface AuthenticationService {
 

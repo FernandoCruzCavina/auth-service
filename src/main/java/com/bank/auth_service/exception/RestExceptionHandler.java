@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Handles custom exceptions and returns appropriate HTTP responses with error messages.
  * 
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 @ControllerAdvice
 public class RestExceptionHandler {

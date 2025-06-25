@@ -12,9 +12,9 @@ import com.bank.auth_service.model.User;
  * Provides methods for retrieving user data from the database.
  *
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
+ * @version 1.0.0, 06/23/2025
  * @see User
- * @since 1.0
+ * @since 1.0.0
  */
 public interface UserRepository extends JpaRepository<User, String> {
     /**

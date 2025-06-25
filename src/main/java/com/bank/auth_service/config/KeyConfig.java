@@ -32,8 +32,8 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
  * but its content is readable unless encrypted separately.</p>
  *
  * @author Fernando Cruz Cavina
- * @version 1.0, 06/23/2025
- * @since 1.0
+ * @version 1.0.0, 06/23/2025
+ * @since 1.0.0
  */
 
 @Configuration
