@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class UserAuthenticated implements UserDetails, CredentialsContainer {
     
-        private final User user;
+        private final transient User user;
     
         public UserAuthenticated(User user) {
             this.user = user;

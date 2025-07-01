@@ -25,5 +25,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID
      * @param refreshToken the UUID of the refresh token
      * @return an {@link Optional} containing the token, if found
      */
-    Optional<RefreshToken> findByRefreshToken(UUID refreshToken);
+    Optional<RefreshToken> findById(UUID id);
 }

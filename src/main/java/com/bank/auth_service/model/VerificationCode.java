@@ -17,7 +17,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "code_tb")
-public class Code {
+public class VerificationCode {
     
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Code {
     /**
      * Default constructor.
      */
-    public Code(){}
+    public VerificationCode(){}
 
     /**
      * Constructs a new Code with the specified key, code, and creation time.
@@ -38,7 +38,7 @@ public class Code {
      * @param code the verification code
      * @param createdAt the creation timestamp
      */
-    public Code(String keyCode, String code, Long createdAt){
+    public VerificationCode(String keyCode, String code, Long createdAt){
         this.keyCode = keyCode;
         this.code = code;
         this.createdAt = createdAt;

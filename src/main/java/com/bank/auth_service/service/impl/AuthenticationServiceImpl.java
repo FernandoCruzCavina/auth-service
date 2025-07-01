@@ -68,9 +68,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             codePublisher.publishMessageEmailWithUnusualAccessWarning(tokenValidated.getUser().getEmail(),ip,userAgent,Instant.now());
         }
         var userAuthenticated = new UserAuthenticated(tokenValidated.getUser());
-        var newToken = jwtService.generateToken(userAuthenticated);
-
-        return newToken;
+        
+        return jwtService.generateToken(userAuthenticated);
     }
 
     public String getIpAddress(HttpServletRequest request) {

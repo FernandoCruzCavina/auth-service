@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.exception.CodeNotFoundOrExpiredException;
 import com.bank.auth_service.exception.InvalidCodeException;
-import com.bank.auth_service.model.Code;
+import com.bank.auth_service.model.VerificationCode;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
 
@@ -48,21 +48,21 @@ class VerificationCodeServiceImplTest {
 
     @Test
     void generateCode_shouldSaveAndReturnCodeAndPublish() {
-        ArgumentCaptor<Code> codeCaptor = ArgumentCaptor.forClass(Code.class);
+        ArgumentCaptor<VerificationCode> codeCaptor = ArgumentCaptor.forClass(VerificationCode.class);
 
         String generatedCode = verificationCodeService.generateCode(key);
 
         verify(codeRepository).save(codeCaptor.capture());
         verify(codePublisher).publishMessageEmailWithCodeSecurity(codeCaptor.getValue());
         assertEquals(key, codeCaptor.getValue().getKeyCode());
-        assertEquals(generatedCode, "Código gerado com sucesso! Verifique seu e-mail para confirmar o pagamento.");
+        assertEquals("Código gerado com sucesso! Verifique seu e-mail para confirmar o pagamento.", generatedCode);
         assertNotNull(generatedCode);
     }
 
     @Test
     void validateCode_shouldReturnOkWhenCodeIsValid() {
         long now = Instant.now().toEpochMilli();
-        Code codeModel = new Code(key, code, now);
+        VerificationCode codeModel = new VerificationCode(key, code, now);
 
         when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));
 
@@ -78,7 +78,7 @@ class VerificationCodeServiceImplTest {
     @Test
     void validateCode_shouldThrowInvalidCodeExceptionWhenCodeIsInvalid() {
         long now = Instant.now().toEpochMilli();
-        Code codeModel = new Code(key, code, now);
+        VerificationCode codeModel = new VerificationCode(key, code, now);
 
         when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));
 
@@ -92,7 +92,7 @@ class VerificationCodeServiceImplTest {
     @Test
     void validateCode_shouldThrowCodeNotFoundOrExpiredWhenCodeIsExpired() {
         long expiredTime = Instant.now().minusSeconds(5 * 60).toEpochMilli();
-        Code codeModel = new Code(key, code, expiredTime);
+        VerificationCode codeModel = new VerificationCode(key, code, expiredTime);
 
         when(codeRepository.findByKeyCode(key)).thenReturn(Optional.of(List.of(codeModel)));
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.exception.CodeNotFoundOrExpiredException;
 import com.bank.auth_service.exception.InvalidCodeException;
-import com.bank.auth_service.model.Code;
+import com.bank.auth_service.model.VerificationCode;
 import com.bank.auth_service.publish.CodePublisher;
 import com.bank.auth_service.repository.CodeRepository;
 import com.bank.auth_service.service.VerificationCodeService;
@@ -20,6 +20,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService{
 
     private final CodeRepository codeRepository;
     private final CodePublisher codePublisher;
+    private Random randomCode = new Random();
 
     public VerificationCodeServiceImpl(CodeRepository codeRepository, CodePublisher codePublisher){
         this.codeRepository = codeRepository;
@@ -27,8 +28,8 @@ public class VerificationCodeServiceImpl implements VerificationCodeService{
     }
 
     public String generateCode(String key){
-        var code = String.format("%06d", new Random().nextInt(1_000_000));
-        var codeModel = new Code(key, code, Instant.now().toEpochMilli());
+        var code = String.format("%06d", randomCode.nextInt(1_000_000));
+        var codeModel = new VerificationCode(key, code, Instant.now().toEpochMilli());
         
         codeRepository.save(codeModel);
         codePublisher.publishMessageEmailWithCodeSecurity(codeModel);
@@ -37,9 +38,9 @@ public class VerificationCodeServiceImpl implements VerificationCodeService{
     }
 
     public String validateCode(ConfirmCodeDto confirmCode){
-        Optional<List<Code>> storeCode = codeRepository.findByKeyCode(confirmCode.key());
+        Optional<List<VerificationCode>> storeCode = codeRepository.findByKeyCode(confirmCode.key());
         Long now = Instant.now().toEpochMilli();
-        Optional<Code> validCode = storeCode
+        Optional<VerificationCode> validCode = storeCode
             .flatMap(codes -> codes.stream()
                 .filter(code -> now - code.getCreatedAt() <= 5 * 60 * 1000)
                 .findFirst());
@@ -56,36 +57,5 @@ public class VerificationCodeServiceImpl implements VerificationCodeService{
         codePublisher.publishValidatePayment(confirmCode);  
         return "OK! seu codigo e valido: " + validCode.get().getCode() + " seu pagamento foi realizado com sucesso!";
     }
-    // private final RedisTemplate<String, String> redisTemplate;
-
-    // public VerificationCodeService(RedisTemplate<String, String> redisTemplate){
-    //     this.redisTemplate = redisTemplate;
-    // }
-
-    // public String generateCode(String key){
-
-    //     String code = String.format("%06d", new Random().nextInt(1_000_000));
-
-    //     ValueOperations<String, String> ops = redisTemplate.opsForValue();
-    //     ops.set(key, code, Duration.ofMinutes(2));
-
-    //     return code;
-    // }
-
-    // public String validationCode(String key, String inputCode) throws Exception{
-
-    //     ValueOperations<String, String> ops = redisTemplate.opsForValue();
-    //     String storeCode = ops.get(key);
-
-    //     if(inputCode==null) throw new Exception();
-
-    //     boolean isValid = storeCode.equals(inputCode);
-
-    //     if (!isValid) {
-    //         throw new Exception();
-    //     }
-    //     redisTemplate.delete(key);
-    //     return "This code " + storeCode + "is correct";
-        
-    // }
+    
 }

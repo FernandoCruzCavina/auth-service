@@ -31,7 +31,7 @@ import lombok.Setter;
 public class RefreshToken {
 
     @Id
-    private UUID refreshToken;
+    private UUID id;
     private long expirationDate;
     private String ip;
     private String userAgent;

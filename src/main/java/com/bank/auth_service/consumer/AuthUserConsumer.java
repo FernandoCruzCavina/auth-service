@@ -23,12 +23,13 @@ import com.bank.auth_service.service.VerificationCodeService;
 @Component
 public class AuthUserConsumer {
     
-    @Autowired
-    RabbitTemplate rabbitTemplate;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    VerificationCodeService verificationCodeService;
+    private final UserRepository userRepository;
+    private final VerificationCodeService verificationCodeService;
+
+    public AuthUserConsumer(UserRepository userRepository, VerificationCodeService verificationCodeService) {
+        this.userRepository = userRepository;
+        this.verificationCodeService = verificationCodeService;
+    }
 
     /**
      * Receives a request to create a user from user microservice.

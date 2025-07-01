@@ -31,16 +31,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RabbitmqConfig {
 
     @Value("${broker.queue.create.auth}")
-    public String authQueue;
+    public String exchangeAuth;
 
     @Value("${broker.queue.email.sender}")
-    public String emailQueue; 
+    public String exchangeEmail; 
 
     @Value("${broker.queue.requestNewCode}")
-    public String requestNewCodeQueue;
+    public String exchangeRequestNewCode;
 
     @Value("${broker.queue.sendPayment}")
-    public String sendPaymentQueue;
+    public String exchangeSendPayment;
 
     /**
      * Defines the authentication queue bean.
@@ -49,7 +49,7 @@ public class RabbitmqConfig {
      */
     @Bean
     public Queue authQueue() {
-        return new Queue(authQueue, true);
+        return new Queue(exchangeAuth, true);
     }
 
     /**
@@ -59,7 +59,7 @@ public class RabbitmqConfig {
      */
     @Bean
     public Queue emailQueue(){
-        return new Queue(emailQueue, true);
+        return new Queue(exchangeEmail, true);
     }
 
     /**
@@ -69,7 +69,7 @@ public class RabbitmqConfig {
      */
     @Bean
     public Queue requestNewCodeQueue() {
-        return new Queue(requestNewCodeQueue, true);
+        return new Queue(exchangeRequestNewCode, true);
     }
 
     /**
@@ -79,7 +79,7 @@ public class RabbitmqConfig {
      */
     @Bean
     public Queue sendPaymentQueue() {
-        return new Queue(sendPaymentQueue, true);
+        return new Queue(exchangeSendPayment, true);
     }
 
     /**

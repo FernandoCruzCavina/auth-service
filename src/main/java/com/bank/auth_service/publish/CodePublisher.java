@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.bank.auth_service.dto.ConclusionPaymentDto;
 import com.bank.auth_service.dto.ConfirmCodeDto;
 import com.bank.auth_service.dto.SendEmailDto;
-import com.bank.auth_service.model.Code;
+import com.bank.auth_service.model.VerificationCode;
 
 /**
  * Handles the publication of messages to RabbitMQ queues for email notifications
@@ -32,21 +32,24 @@ import com.bank.auth_service.model.Code;
 @Component
 public class CodePublisher {
     
-    @Autowired
-    RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${broker.queue.email.sender}")
     private String routingEmailKey;
-
+    
     @Value("${broker.queue.sendPayment}")
     private String routingPaymentKey;
-
+    
+    public CodePublisher(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+    
     /**
      * Publishes an email message containing a security code to the user.
      * 
      * @param code the security code to be sent
      */
-    public void publishMessageEmailWithCodeSecurity(Code code){
+    public void publishMessageEmailWithCodeSecurity(VerificationCode code){
         var emailDto = new SendEmailDto();
         Instant createdInstant = Instant.ofEpochMilli(code.getCreatedAt());
         String formattedDate = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")

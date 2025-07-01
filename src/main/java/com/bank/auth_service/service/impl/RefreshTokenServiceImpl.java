@@ -36,7 +36,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     }
 
     public RefreshToken validateRefreshToken(UUID token) {
-        var stored = refreshTokenRepository.findByRefreshToken(token)
+        var stored = refreshTokenRepository.findById(token)
                 .orElseThrow(RefreshTokenNotFoundException::new);
 
         if(stored.getExpirationDate() >= Instant.now().toEpochMilli()){
